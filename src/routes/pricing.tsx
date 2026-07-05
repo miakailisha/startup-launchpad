@@ -32,9 +32,9 @@ const tiers = [
 export const Route = createFileRoute("/pricing")({
   head: () => ({
     meta: [
-      { title: "Pricing — Handy Hands" },
+      { title: "Pricing — Perigon" },
       { name: "description", content: "Simple, honest pricing for tech help, home tasks, home-visit barbing and everyday goods." },
-      { property: "og:title", content: "Pricing — Handy Hands" },
+      { property: "og:title", content: "Pricing — Perigon" },
       { property: "og:description", content: "No surprises. Quotes given up front, before any work starts." },
     ],
   }),

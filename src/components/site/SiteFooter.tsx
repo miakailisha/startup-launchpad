@@ -25,7 +25,7 @@ export function SiteFooter() {
         <div>
           <h4 className="mb-3 text-sm font-semibold tracking-wide uppercase text-foreground/80">Reach us</h4>
           <ul className="space-y-2 text-sm text-muted-foreground">
-            <li>hello@handyhands.co</li>
+            <li>hello@perigon.co</li>
             <li>+1 (555) 010-4477</li>
             <li>Mon–Sat · 8am to 8pm</li>
           </ul>
@@ -33,7 +33,7 @@ export function SiteFooter() {
       </div>
       <div className="border-t border-border/60">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 px-6 py-5 text-xs text-muted-foreground sm:flex-row">
-          <span>© {new Date().getFullYear()} Handy Hands. All rights reserved.</span>
+          <span>© {new Date().getFullYear()} Perigon. All rights reserved.</span>
           <span>Made with care.</span>
         </div>
       </div>
