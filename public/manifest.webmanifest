@@ -1,0 +1,14 @@
+{
+  "name": "Perigon",
+  "short_name": "Perigon",
+  "description": "Trusted local help for tech, home tasks, grooming and everyday goods.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#faf8f5",
+  "theme_color": "#c4654a",
+  "icons": [
+    { "src": "/perigon-logo.png", "sizes": "1024x1024", "type": "image/png", "purpose": "any" },
+    { "src": "/perigon-logo.png", "sizes": "1024x1024", "type": "image/png", "purpose": "maskable" }
+  ]
+}

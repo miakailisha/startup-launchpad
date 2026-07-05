@@ -12,9 +12,9 @@ const values = [
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: "About — Handy Hands" },
+      { title: "About — Perigon" },
       { name: "description", content: "We're a small local team building the kind of neighbourhood service company we always wished existed." },
-      { property: "og:title", content: "About — Handy Hands" },
+      { property: "og:title", content: "About — Perigon" },
       { property: "og:description", content: "A small team. Real accountability. Work we're proud to put our name on." },
     ],
   }),
@@ -39,7 +39,7 @@ function AboutPage() {
         <Reveal className="md:col-span-7">
           <div className="space-y-5 text-lg leading-relaxed text-foreground/85">
             <p>
-              Handy Hands started with a simple frustration: it's surprisingly hard to find someone
+              Perigon started with a simple frustration: it's surprisingly hard to find someone
               reliable for the small stuff. A broken shelf. A stubborn Wi-Fi router. A haircut before
               a wedding. A quick grocery run when the day gets away from you.
             </p>

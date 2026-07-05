@@ -34,9 +34,9 @@ type FormValues = z.infer<typeof schema>;
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Book a service — Handy Hands" },
-      { name: "description", content: "Book Handy Hands for tech help, home tasks, home-visit barbing or everyday goods. We reply within a couple of hours." },
-      { property: "og:title", content: "Book a service — Handy Hands" },
+      { title: "Book a service — Perigon" },
+      { name: "description", content: "Book Perigon for tech help, home tasks, home-visit barbing or everyday goods. We reply within a couple of hours." },
+      { property: "og:title", content: "Book a service — Perigon" },
       { property: "og:description", content: "Tell us what you need. We'll be back within a couple of hours." },
     ],
   }),
@@ -165,7 +165,7 @@ function ContactPage() {
             <div className="rounded-2xl border border-border bg-card p-6">
               <h3 className="font-display text-xl">Reach us directly</h3>
               <ul className="mt-4 space-y-3 text-sm">
-                <li className="flex items-center gap-3"><Mail className="h-4 w-4 text-primary" /> hello@handyhands.co</li>
+                <li className="flex items-center gap-3"><Mail className="h-4 w-4 text-primary" /> hello@perigon.co</li>
                 <li className="flex items-center gap-3"><Phone className="h-4 w-4 text-primary" /> +1 (555) 010-4477</li>
                 <li className="flex items-center gap-3"><Clock className="h-4 w-4 text-primary" /> Mon–Sat · 8am to 8pm</li>
                 <li className="flex items-center gap-3"><MapPin className="h-4 w-4 text-primary" /> Serving greater downtown & surrounds</li>
