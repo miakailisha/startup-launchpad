@@ -6,8 +6,8 @@ export function SiteFooter() {
       <div className="mx-auto grid max-w-6xl gap-10 px-6 py-14 md:grid-cols-4">
         <div className="md:col-span-2">
           <div className="flex items-center gap-2">
-            <span className="grid h-8 w-8 place-items-center rounded-full bg-primary text-primary-foreground font-display text-lg">H</span>
-            <span className="font-display text-xl">Handy Hands</span>
+            <img src="/perigon-logo.png" alt="" width={32} height={32} className="h-8 w-8 rounded-full object-cover" />
+            <span className="font-display text-xl tracking-tight">Perigon</span>
           </div>
           <p className="mt-3 max-w-sm text-sm text-muted-foreground">
             Trusted help for your home, tech, grooming and everyday essentials — one team, on call.

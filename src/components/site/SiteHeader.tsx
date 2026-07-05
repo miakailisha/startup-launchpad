@@ -16,8 +16,8 @@ export function SiteHeader() {
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
         <Link to="/" className="flex items-center gap-2">
-          <span className="grid h-8 w-8 place-items-center rounded-full bg-primary text-primary-foreground font-display text-lg">H</span>
-          <span className="font-display text-xl">Handy&nbsp;Hands</span>
+          <img src="/perigon-logo.png" alt="" width={32} height={32} className="h-8 w-8 rounded-full object-cover" />
+          <span className="font-display text-xl tracking-tight">Perigon</span>
         </Link>
         <nav className="hidden items-center gap-8 md:flex">
           {links.map((l) => (
