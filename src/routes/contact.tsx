@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
-import { Mail, Phone, Clock, MapPin } from "lucide-react";
+import { Mail, Phone, Clock, MapPin, MessageCircle } from "lucide-react";
 
 import { SiteShell } from "@/components/site/SiteShell";
 import { Reveal } from "@/components/site/Reveal";
@@ -18,7 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { services } from "@/lib/services";
+import { homeServices, whatsappLink } from "@/lib/homeServices";
 
 const schema = z.object({
   name: z.string().trim().min(2, "Please tell us your name").max(80),
@@ -26,6 +26,7 @@ const schema = z.object({
   phone: z.string().trim().min(6, "Enter a valid phone number").max(30),
   service: z.string().min(1, "Pick a service"),
   date: z.string().optional(),
+  address: z.string().trim().max(200).optional(),
   message: z.string().trim().min(10, "A little more detail helps").max(1000),
 });
 
@@ -34,11 +35,13 @@ type FormValues = z.infer<typeof schema>;
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Book a service — Perigon" },
-      { name: "description", content: "Book Perigon for tech help, home tasks, home-visit barbing or everyday goods. We reply within a couple of hours." },
-      { property: "og:title", content: "Book a service — Perigon" },
+      { title: "Contact & Book a Service — Perigon" },
+      { name: "description", content: "Get in touch or book a Perigon service — cleaning, plumbing, electrical, installations and more. We reply within a couple of hours." },
+      { property: "og:title", content: "Contact & Book a Service — Perigon" },
       { property: "og:description", content: "Tell us what you need. We'll be back within a couple of hours." },
+      { property: "og:url", content: "/contact" },
     ],
+    links: [{ rel: "canonical", href: "/contact" }],
   }),
   component: ContactPage,
 });
@@ -54,7 +57,7 @@ function ContactPage() {
     formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
-    defaultValues: { name: "", email: "", phone: "", service: "", date: "", message: "" },
+    defaultValues: { name: "", email: "", phone: "", service: "", date: "", address: "", message: "" },
   });
 
   const serviceValue = watch("service");
@@ -73,13 +76,12 @@ function ContactPage() {
     <SiteShell>
       <section className="mx-auto max-w-6xl px-6 pt-20 pb-10 md:pt-28">
         <Reveal>
-          <p className="text-xs uppercase tracking-wider text-muted-foreground">Contact</p>
+          <p className="text-xs uppercase tracking-wider text-muted-foreground">Contact & Booking</p>
           <h1 className="mt-3 max-w-3xl font-display text-5xl md:text-6xl">
             Tell us what you need.
           </h1>
           <p className="mt-4 max-w-2xl text-muted-foreground">
-            Fill in a few details and we'll come back with a time and a quote — usually within a
-            couple of hours.
+            Fill in a few details and we'll come back with a time and a quote — usually within a couple of hours.
           </p>
         </Reveal>
       </section>
@@ -103,7 +105,7 @@ function ContactPage() {
               </div>
               <div>
                 <Label htmlFor="phone">Phone</Label>
-                <Input id="phone" type="tel" placeholder="+1 555 000 0000" className="mt-2" {...register("phone")} />
+                <Input id="phone" type="tel" placeholder="+234 800 000 0000" className="mt-2" {...register("phone")} />
                 {errors.phone && <p className="mt-1 text-xs text-destructive">{errors.phone.message}</p>}
               </div>
               <div>
@@ -122,11 +124,10 @@ function ContactPage() {
                   <SelectValue placeholder="Pick a service" />
                 </SelectTrigger>
                 <SelectContent>
-                  {services.map((s) => (
-                    <SelectItem key={s.id} value={s.title}>
-                      {s.title}
-                    </SelectItem>
+                  {homeServices.map((s) => (
+                    <SelectItem key={s.id} value={s.name}>{s.name}</SelectItem>
                   ))}
+                  <SelectItem value="Product enquiry">Product enquiry</SelectItem>
                   <SelectItem value="Something else">Something else</SelectItem>
                 </SelectContent>
               </Select>
@@ -134,11 +135,16 @@ function ContactPage() {
             </div>
 
             <div>
+              <Label htmlFor="address">Address (for services)</Label>
+              <Input id="address" placeholder="Street, area, city" className="mt-2" {...register("address")} />
+            </div>
+
+            <div>
               <Label htmlFor="message">What do you need?</Label>
               <Textarea
                 id="message"
                 rows={5}
-                placeholder="A short description of the job, location, and anything we should know."
+                placeholder="A short description of what you need, including any details we should know."
                 className="mt-2"
                 {...register("message")}
               />
@@ -154,7 +160,7 @@ function ContactPage() {
                 disabled={submitting}
                 className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-60"
               >
-                {submitting ? "Sending…" : "Send booking request"}
+                {submitting ? "Sending…" : "Send request"}
               </button>
             </div>
           </form>
@@ -166,15 +172,24 @@ function ContactPage() {
               <h3 className="font-display text-xl">Reach us directly</h3>
               <ul className="mt-4 space-y-3 text-sm">
                 <li className="flex items-center gap-3"><Mail className="h-4 w-4 text-primary" /> hello@perigon.co</li>
-                <li className="flex items-center gap-3"><Phone className="h-4 w-4 text-primary" /> +1 (555) 010-4477</li>
+                <li className="flex items-center gap-3"><Phone className="h-4 w-4 text-primary" /> +234 800 000 0000</li>
+                <li className="flex items-center gap-3"><MessageCircle className="h-4 w-4 text-primary" /> WhatsApp: +234 800 000 0000</li>
                 <li className="flex items-center gap-3"><Clock className="h-4 w-4 text-primary" /> Mon–Sat · 8am to 8pm</li>
-                <li className="flex items-center gap-3"><MapPin className="h-4 w-4 text-primary" /> Serving greater downtown & surrounds</li>
+                <li className="flex items-start gap-3"><MapPin className="mt-0.5 h-4 w-4 text-primary" /> 24 Adeola Odeku, Victoria Island, Lagos</li>
               </ul>
+              <a
+                href={whatsappLink("Hi Perigon, I'd like to make an enquiry.")}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-5 inline-flex w-full items-center justify-center rounded-full border border-input bg-background px-4 py-2 text-sm font-medium hover:bg-muted"
+              >
+                Chat on WhatsApp
+              </a>
             </div>
             <div className="rounded-2xl bg-accent/40 p-6 text-sm text-foreground/80">
               <p className="font-display text-lg text-foreground">Urgent?</p>
               <p className="mt-2">
-                For same-day help, call us directly — email and forms are checked less often on weekends.
+                For same-day help, call or WhatsApp us — email is checked less often on weekends.
               </p>
             </div>
           </div>
