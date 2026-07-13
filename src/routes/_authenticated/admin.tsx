@@ -251,7 +251,8 @@ function ProductsTab() {
   }
   useEffect(() => { load(); }, []);
   async function toggle(id: string, field: "in_stock" | "featured" | "is_active", v: boolean) {
-    const { error } = await supabase.from("products").update({ [field]: v }).eq("id", id);
+    const patch = field === "in_stock" ? { in_stock: v } : field === "featured" ? { featured: v } : { is_active: v };
+    const { error } = await supabase.from("products").update(patch).eq("id", id);
     if (error) return toast.error(error.message);
     load();
   }
@@ -296,7 +297,8 @@ function ServicesTab() {
   }
   useEffect(() => { load(); }, []);
   async function toggle(id: string, field: "featured" | "is_active", v: boolean) {
-    const { error } = await supabase.from("services").update({ [field]: v }).eq("id", id);
+    const patch = field === "featured" ? { featured: v } : { is_active: v };
+    const { error } = await supabase.from("services").update(patch).eq("id", id);
     if (error) return toast.error(error.message);
     load();
   }
