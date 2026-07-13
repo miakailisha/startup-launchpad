@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
 import { Mail, Phone, Clock, MapPin, MessageCircle } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 import { SiteShell } from "@/components/site/SiteShell";
 import { Reveal } from "@/components/site/Reveal";
@@ -62,14 +63,42 @@ function ContactPage() {
 
   const serviceValue = watch("service");
 
-  const onSubmit = async (_values: FormValues) => {
+  const onSubmit = async (values: FormValues) => {
     setSubmitting(true);
-    await new Promise((r) => setTimeout(r, 600));
-    setSubmitting(false);
-    toast.success("Booking request received", {
-      description: "We'll be in touch within a couple of hours.",
-    });
-    reset();
+    try {
+      const isService = values.service !== "Product enquiry" && values.service !== "Something else";
+      if (isService) {
+        const { error } = await supabase.from("bookings").insert({
+          service_name: values.service,
+          customer_name: values.name,
+          customer_email: values.email,
+          customer_phone: values.phone,
+          address: values.address || null,
+          preferred_date: values.date || null,
+          message: values.message,
+        });
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.from("contact_messages").insert({
+          name: values.name,
+          email: values.email,
+          phone: values.phone,
+          subject: values.service,
+          message: values.message,
+        });
+        if (error) throw error;
+      }
+      toast.success("Request received", {
+        description: "We'll be in touch within a couple of hours.",
+      });
+      reset();
+    } catch (err) {
+      toast.error("Could not send your request", {
+        description: err instanceof Error ? err.message : "Please try again.",
+      });
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
