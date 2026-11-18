@@ -2,8 +2,9 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Check, ShoppingBag, Wrench, HeadphonesIcon, ShieldCheck, Sparkles, Star } from "lucide-react";
 import { SiteShell } from "@/components/site/SiteShell";
 import { Reveal } from "@/components/site/Reveal";
-import { products, formatNGN, productCategories } from "@/lib/products";
+import { products, formatCurrency, productCategories } from "@/lib/products";
 import { homeServices, whatsappLink } from "@/lib/homeServices";
+import { useCurrency } from "@/hooks/use-currency";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -39,6 +40,7 @@ const faqs = [
 ];
 
 function Home() {
+  const currency = useCurrency();
   const featuredProducts = products.filter((p) => p.featured).slice(0, 6);
   const featuredServices = homeServices.filter((s) => s.featured).slice(0, 6);
 
@@ -215,7 +217,7 @@ function Home() {
                     <h3 className="mt-1 font-display text-xl">{p.name}</h3>
                     <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{p.description}</p>
                     <div className="mt-4 flex items-center justify-between">
-                      <span className="font-display text-xl text-primary">{formatNGN(p.price)}</span>
+                      <span className="font-display text-xl text-primary">{formatCurrency(p.price, currency)}</span>
                       <Link to="/products" className="text-sm font-medium text-primary hover:underline">View →</Link>
                     </div>
                   </div>
@@ -248,7 +250,7 @@ function Home() {
                   <h3 className="font-display text-xl">{s.name}</h3>
                   <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{s.description}</p>
                   <div className="mt-4 flex items-center justify-between">
-                    <span className="font-display text-lg text-primary">{s.from ? `from ${formatNGN(s.from)}` : "Request quote"}</span>
+                    <span className="font-display text-lg text-primary">{s.from ? `from ${formatCurrency(s.from, currency)}` : "Request quote"}</span>
                     <Link to="/contact" className="text-sm font-medium text-primary hover:underline">Book →</Link>
                   </div>
                 </div>

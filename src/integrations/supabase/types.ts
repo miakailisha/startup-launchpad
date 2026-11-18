@@ -195,29 +195,104 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          country_code: string
+          currency_code: string
           created_at: string
           display_name: string | null
           email: string | null
           id: string
+          location: string | null
           phone: string | null
           updated_at: string
         }
         Insert: {
           avatar_url?: string | null
+          country_code?: string
+          currency_code?: string
           created_at?: string
           display_name?: string | null
           email?: string | null
           id: string
+          location?: string | null
           phone?: string | null
           updated_at?: string
         }
         Update: {
           avatar_url?: string | null
+          country_code?: string
+          currency_code?: string
           created_at?: string
           display_name?: string | null
           email?: string | null
           id?: string
+          location?: string | null
           phone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      balance_transactions: {
+        Row: {
+          amount_ngn: number
+          created_at: string
+          created_by: string
+          deposit_account_id: string | null
+          id: string
+          note: string | null
+          transaction_type: string
+          user_id: string
+        }
+        Insert: {
+          amount_ngn: number
+          created_at?: string
+          created_by: string
+          deposit_account_id?: string | null
+          id?: string
+          note?: string | null
+          transaction_type: string
+          user_id: string
+        }
+        Update: {
+          amount_ngn?: number
+          created_at?: string
+          created_by?: string
+          deposit_account_id?: string | null
+          id?: string
+          note?: string | null
+          transaction_type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      deposit_accounts: {
+        Row: {
+          account_name: string
+          account_number: string
+          bank_name: string
+          created_at: string
+          id: string
+          instructions: string | null
+          is_active: boolean
+          updated_at: string
+        }
+        Insert: {
+          account_name: string
+          account_number: string
+          bank_name: string
+          created_at?: string
+          id?: string
+          instructions?: string | null
+          is_active?: boolean
+          updated_at?: string
+        }
+        Update: {
+          account_name?: string
+          account_number?: string
+          bank_name?: string
+          created_at?: string
+          id?: string
+          instructions?: string | null
+          is_active?: boolean
           updated_at?: string
         }
         Relationships: []
@@ -332,11 +407,46 @@ export type Database = {
         }
         Relationships: []
       }
+      user_balances: {
+        Row: {
+          balance_ngn: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          balance_ngn?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          balance_ngn?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      admin_record_balance_transaction: {
+        Args: {
+          _amount_ngn: number
+          _deposit_account_id?: string | null
+          _note?: string | null
+          _target_user: string
+          _transaction_type: string
+        }
+        Returns: string
+      }
+      admin_set_user_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _target_user: string
+        }
+        Returns: undefined
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -346,7 +456,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin" | "customer"
+      app_role: "admin" | "customer" | "super_admin"
       booking_status:
         | "pending"
         | "confirmed"
@@ -480,7 +590,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "customer"],
+      app_role: ["admin", "customer", "super_admin"],
       booking_status: [
         "pending",
         "confirmed",

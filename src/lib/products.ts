@@ -164,6 +164,15 @@ export const products: Product[] = [
   },
 ];
 
+export function formatCurrency(value: number, currency = "NGN") {
+  const options: Intl.NumberFormatOptions = {
+    style: "currency",
+    currency,
+  };
+  if (currency === "NGN") options.maximumFractionDigits = 0;
+  return new Intl.NumberFormat(undefined, options).format(value);
+}
+
 export function formatNGN(value: number) {
-  return new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN", maximumFractionDigits: 0 }).format(value);
+  return formatCurrency(value, "NGN");
 }

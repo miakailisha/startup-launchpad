@@ -7,6 +7,7 @@ import { lovable } from "@/integrations/lovable";
 import { SiteShell } from "@/components/site/SiteShell";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { countries } from "@/lib/countries";
 
 const searchSchema = z.object({ redirect: z.string().optional() });
 
@@ -28,22 +29,65 @@ function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [location, setLocation] = useState("");
+  const [countryCode, setCountryCode] = useState("");
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
+    let completed = false;
+    function completeSignIn(userId: string) {
+      if (completed) return;
+      completed = true;
+      const pending = localStorage.getItem("pending-signup-location");
+      if (!pending) {
+        navigate({ to: redirect || "/", replace: true });
+        return;
+      }
+
+      localStorage.removeItem("pending-signup-location");
+      try {
+        const profile = JSON.parse(pending) as {
+          location: string;
+          country_code: string;
+        };
+        window.setTimeout(() => {
+          void supabase.from("profiles").update(profile).eq("id", userId).then(({ error }) => {
+            if (error) toast.error("Could not save your location", { description: error.message });
+            navigate({ to: redirect || "/", replace: true });
+          });
+        }, 0);
+      } catch (error) {
+        toast.error("Could not save your location", {
+          description: error instanceof Error ? error.message : String(error),
+        });
+        navigate({ to: redirect || "/", replace: true });
+      }
+    }
+
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: redirect || "/", replace: true });
+      if (data.session) completeSignIn(data.session.user.id);
     });
     const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => {
-      if (s) navigate({ to: redirect || "/", replace: true });
+      if (s) completeSignIn(s.user.id);
     });
     return () => sub.subscription.unsubscribe();
   }, [redirect, navigate]);
 
   async function handleGoogle() {
+    if (mode === "signup") {
+      if (!countryCode) {
+        toast.error("Choose your country before creating an account");
+        return;
+      }
+      localStorage.setItem("pending-signup-location", JSON.stringify({
+        location: location.trim(),
+        country_code: countryCode,
+      }));
+    }
     setBusy(true);
     const r = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
     if (r.error) {
+      localStorage.removeItem("pending-signup-location");
       toast.error("Google sign-in failed", { description: String(r.error.message ?? r.error) });
       setBusy(false);
     }
@@ -51,6 +95,7 @@ function AuthPage() {
 
   async function handleEmail(e: React.FormEvent) {
     e.preventDefault();
+    localStorage.removeItem("pending-signup-location");
     setBusy(true);
     try {
       if (mode === "signup") {
@@ -59,7 +104,11 @@ function AuthPage() {
           password,
           options: {
             emailRedirectTo: window.location.origin,
-            data: { display_name: name || email.split("@")[0] },
+            data: {
+              display_name: name || email.split("@")[0],
+              location: location.trim(),
+              country_code: countryCode,
+            },
           },
         });
         if (error) throw error;
@@ -90,7 +139,7 @@ function AuthPage() {
 
         <button
           onClick={handleGoogle}
-          disabled={busy}
+          disabled={busy || (mode === "signup" && !countryCode)}
           className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-full border border-input bg-background px-5 py-3 text-sm font-medium hover:bg-muted disabled:opacity-60"
         >
           <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true">
@@ -105,10 +154,33 @@ function AuthPage() {
 
         <form onSubmit={handleEmail} className="space-y-4">
           {mode === "signup" && (
-            <div>
-              <Label htmlFor="name">Your name</Label>
-              <Input id="name" value={name} onChange={(e) => setName(e.target.value)} className="mt-2" placeholder="Jane Doe" />
-            </div>
+            <>
+              <div>
+                <Label htmlFor="name">Your name</Label>
+                <Input id="name" value={name} onChange={(e) => setName(e.target.value)} className="mt-2" placeholder="Jane Doe" />
+              </div>
+              <div>
+                <Label htmlFor="country">Country</Label>
+                <select
+                  id="country"
+                  required
+                  value={countryCode}
+                  onChange={(e) => setCountryCode(e.target.value)}
+                  className="mt-2 h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                >
+                  <option value="" disabled>Choose your country</option>
+                  {countries.map((country) => (
+                    <option key={country.code} value={country.code}>
+                      {country.name} ({country.currency})
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <Label htmlFor="location">City or region</Label>
+                <Input id="location" value={location} onChange={(e) => setLocation(e.target.value)} className="mt-2" placeholder="Lagos" />
+              </div>
+            </>
           )}
           <div>
             <Label htmlFor="email">Email</Label>

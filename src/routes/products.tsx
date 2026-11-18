@@ -7,8 +7,9 @@ import { SiteShell } from "@/components/site/SiteShell";
 import { Reveal } from "@/components/site/Reveal";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { products, productCategories, formatNGN } from "@/lib/products";
+import { products, productCategories, formatCurrency } from "@/lib/products";
 import { whatsappLink } from "@/lib/homeServices";
+import { useCurrency } from "@/hooks/use-currency";
 
 const searchSchema = z.object({
   q: fallback(z.string(), "").default(""),
@@ -32,14 +33,6 @@ export const Route = createFileRoute("/products")({
   component: ProductsPage,
 });
 
-const priceBands = [
-  { id: "any", label: "Any price" },
-  { id: "u10", label: "Under ₦10,000" },
-  { id: "10-30", label: "₦10,000 – ₦30,000" },
-  { id: "30-70", label: "₦30,000 – ₦70,000" },
-  { id: "70+", label: "Over ₦70,000" },
-];
-
 function inBand(price: number, band: string) {
   switch (band) {
     case "u10": return price < 10000;
@@ -51,11 +44,19 @@ function inBand(price: number, band: string) {
 }
 
 function ProductsPage() {
+  const currency = useCurrency();
   const initial = Route.useSearch();
   const [q, setQ] = useState(initial.q);
   const [category, setCategory] = useState(initial.category);
   const [price, setPrice] = useState(initial.price);
   const [availability, setAvailability] = useState(initial.availability);
+  const priceBands = [
+    { id: "any", label: "Any price" },
+    { id: "u10", label: `Under ${formatCurrency(10000, currency)}` },
+    { id: "10-30", label: `${formatCurrency(10000, currency)} – ${formatCurrency(30000, currency)}` },
+    { id: "30-70", label: `${formatCurrency(30000, currency)} – ${formatCurrency(70000, currency)}` },
+    { id: "70+", label: `Over ${formatCurrency(70000, currency)}` },
+  ];
 
   const filtered = useMemo(() => {
     const term = q.trim().toLowerCase();
@@ -131,12 +132,12 @@ function ProductsPage() {
                   <h3 className="mt-1 font-display text-xl">{p.name}</h3>
                   <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{p.description}</p>
                   <div className="mt-4 flex items-center justify-between">
-                    <span className="font-display text-xl text-primary">{formatNGN(p.price)}</span>
+                    <span className="font-display text-xl text-primary">{formatCurrency(p.price, currency)}</span>
                     <span className={`text-xs ${p.inStock ? "text-accent-foreground/80" : "text-muted-foreground"}`}>{p.inStock ? "In stock" : "Unavailable"}</span>
                   </div>
                   <div className="mt-5 flex flex-wrap gap-2">
                     <a
-                      href={whatsappLink(`Hi Perigon, I'd like to buy "${p.name}" (${formatNGN(p.price)}).`)}
+                      href={whatsappLink(`Hi Perigon, I'd like to buy "${p.name}" (${formatCurrency(p.price, currency)}).`)}
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-disabled={!p.inStock}
