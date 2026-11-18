@@ -34,9 +34,14 @@ export function useAuth(): AuthState {
       .from("user_roles")
       .select("role")
       .eq("user_id", session.user.id)
-      .eq("role", "admin")
-      .maybeSingle()
-      .then(({ data }) => setIsAdmin(!!data));
+      .then(({ data, error }) => {
+        if (error) {
+          console.error("Could not load user role:", error.message);
+          setIsAdmin(false);
+          return;
+        }
+        setIsAdmin(data?.some(({ role }) => role === "admin" || role === "super_admin") ?? false);
+      });
   }, [session?.user?.id]);
 
   return { user: session?.user ?? null, session, loading, isAdmin };

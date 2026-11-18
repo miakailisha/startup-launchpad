@@ -15,6 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { formatNGN } from "@/lib/products";
+import { UsersTab, DepositAccountsTab, BalancesTab } from "@/components/admin/AdminManagementTabs";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({ meta: [{ title: "Admin — Perigon" }] }),
@@ -68,18 +69,19 @@ type ContactMessage = {
 function AdminPage() {
   const [checking, setChecking] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
 
   useEffect(() => {
     (async () => {
       const { data: u } = await supabase.auth.getUser();
       if (!u.user) return setChecking(false);
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("user_roles")
         .select("role")
-        .eq("user_id", u.user.id)
-        .eq("role", "admin")
-        .maybeSingle();
-      setIsAdmin(!!data);
+        .eq("user_id", u.user.id);
+      if (error) toast.error("Could not verify admin access", { description: error.message });
+      setIsAdmin(data?.some(({ role }) => role === "admin" || role === "super_admin") ?? false);
+      setIsSuperAdmin(data?.some(({ role }) => role === "super_admin") ?? false);
       setChecking(false);
     })();
   }, []);
@@ -130,11 +132,17 @@ function AdminPage() {
             <TabsTrigger value="messages">Messages</TabsTrigger>
             <TabsTrigger value="products">Products</TabsTrigger>
             <TabsTrigger value="services">Services</TabsTrigger>
+            <TabsTrigger value="users">Users</TabsTrigger>
+            <TabsTrigger value="balances">Balances</TabsTrigger>
+            <TabsTrigger value="deposit-accounts">Deposit accounts</TabsTrigger>
           </TabsList>
           <TabsContent value="bookings"><BookingsTab /></TabsContent>
           <TabsContent value="messages"><MessagesTab /></TabsContent>
           <TabsContent value="products"><ProductsTab /></TabsContent>
           <TabsContent value="services"><ServicesTab /></TabsContent>
+          <TabsContent value="users"><UsersTab canManageSuperAdmins={isSuperAdmin} /></TabsContent>
+          <TabsContent value="balances"><BalancesTab /></TabsContent>
+          <TabsContent value="deposit-accounts"><DepositAccountsTab /></TabsContent>
         </Tabs>
       </section>
     </SiteShell>

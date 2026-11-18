@@ -3,7 +3,8 @@ import { Clock, MapPin } from "lucide-react";
 import { SiteShell } from "@/components/site/SiteShell";
 import { Reveal } from "@/components/site/Reveal";
 import { homeServices, whatsappLink } from "@/lib/homeServices";
-import { formatNGN } from "@/lib/products";
+import { formatCurrency } from "@/lib/products";
+import { useCurrency } from "@/hooks/use-currency";
 
 export const Route = createFileRoute("/services")({
   head: () => ({
@@ -20,6 +21,7 @@ export const Route = createFileRoute("/services")({
 });
 
 function ServicesPage() {
+  const currency = useCurrency();
   return (
     <SiteShell>
       <section className="mx-auto max-w-6xl px-6 pt-20 pb-10 md:pt-28">
@@ -51,7 +53,7 @@ function ServicesPage() {
                   </ul>
                   <div className="mt-5 flex items-baseline gap-2">
                     <span className="font-display text-2xl text-primary">
-                      {s.from ? formatNGN(s.from) : "Request quote"}
+                      {s.from ? formatCurrency(s.from, currency) : "Request quote"}
                     </span>
                     {s.from && <span className="text-xs text-muted-foreground">starting</span>}
                   </div>

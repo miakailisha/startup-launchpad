@@ -50,9 +50,12 @@ export function SiteHeader() {
             </Link>
           )}
           {user ? (
-            <button onClick={handleSignOut} className="inline-flex items-center gap-1 rounded-full border border-input px-4 py-1.5 text-sm hover:bg-muted">
-              <LogOut className="h-4 w-4" /> Sign out
-            </button>
+            <>
+              <Link to="/account" className="text-sm text-muted-foreground hover:text-foreground">My account</Link>
+              <button onClick={handleSignOut} className="inline-flex items-center gap-1 rounded-full border border-input px-4 py-1.5 text-sm hover:bg-muted">
+                <LogOut className="h-4 w-4" /> Sign out
+              </button>
+            </>
           ) : (
             <Link to="/auth" className="inline-flex items-center gap-1 rounded-full border border-input px-4 py-1.5 text-sm hover:bg-muted">
               <UserIcon className="h-4 w-4" /> Sign in
@@ -94,12 +97,17 @@ export function SiteHeader() {
               </Link>
             )}
             {user ? (
-              <button
-                onClick={() => { setOpen(false); handleSignOut(); }}
-                className="rounded-md px-2 py-2 text-left text-sm text-muted-foreground hover:bg-muted"
-              >
-                Sign out
-              </button>
+              <>
+                <Link to="/account" onClick={() => setOpen(false)} className="rounded-md px-2 py-2 text-sm text-muted-foreground hover:bg-muted">
+                  My account
+                </Link>
+                <button
+                  onClick={() => { setOpen(false); handleSignOut(); }}
+                  className="rounded-md px-2 py-2 text-left text-sm text-muted-foreground hover:bg-muted"
+                >
+                  Sign out
+                </button>
+              </>
             ) : (
               <Link to="/auth" onClick={() => setOpen(false)} className="rounded-md px-2 py-2 text-sm text-muted-foreground hover:bg-muted">
                 Sign in
